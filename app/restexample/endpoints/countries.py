@@ -56,5 +56,5 @@ class CountryEntity(Resource):
         match = list(filter(lambda c: c.code == code, countries_list))
         if len(match) == 0:
             raise NotFoundException()
-        #countries_list.remove(match[0])
+        countries_list.remove(match[0])
         return None, 204
