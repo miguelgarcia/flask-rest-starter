@@ -3,7 +3,7 @@ import os
 from flask import Flask, jsonify
 from flask_cors import CORS
 from .utils.validateschema import SchemaViolationException
-
+from .errors import ApiException, NotFoundException, api_exception_handler
 import logging
 
 logger = logging.getLogger(__name__)
@@ -38,6 +38,7 @@ def schema_exception_error_handler(error):
         error=error.error
     )), error.status_code
 
+app.errorhandler(ApiException)(api_exception_handler)
 
 @app.route('/api/help', methods=['GET'])
 def help():
