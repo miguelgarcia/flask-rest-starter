@@ -1,4 +1,7 @@
 # flask-rest-starter
+
+[![CircleCI](https://circleci.com/gh/miguelgarcia/flask-rest-starter.svg?style=svg)](https://circleci.com/gh/miguelgarcia/flask-rest-starter)
+
 Base project to build REST APIs using Flask + Flask-RESTful + marshmallow
 
 # Install deps
