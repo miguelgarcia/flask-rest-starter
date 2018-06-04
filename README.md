@@ -20,7 +20,7 @@ This project contains the components needed to develop, test and deploy as docke
 
     python manage.py test
     
-# Build as Docker image
+# Build Docker image and run
 
     docker -t myimage .
     docker run 5000:80 myimage
@@ -72,6 +72,6 @@ After that, go and check http://localhost:5000/restexample/countries
             
 Note the decorators `@output`, `@qsargs` and `@inputbody`:
 
- * `@qsargs`: validate query string parameters using a marshmallow Schema.
- * `@inputbody`: validate the request body using a marshmallow Schema.
- * `@output`: transforms the method output a marshmallow Schema.
+ * `@qsargs`: validates query string parameters using a marshmallow schema.
+ * `@inputbody`: validates the request body using a marshmallow schema.
+ * `@output`: transforms the method output using a marshmallow schema.
