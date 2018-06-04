@@ -31,6 +31,18 @@ def output(schema_class, *args_ma, **kw_ma):
         return wrapper
     return decorator
 
+def _schema_load(schema_class, args_ma, kw_ma, in_data):
+    data, errors = schema_class(*args_ma, **kw_ma).load(in_data)
+    if(len(errors) > 0):
+        msg = ''
+        for x in errors:
+            msg += x + ":"
+            for d in errors[x]:
+                msg += " " + str(d)
+            msg += '\n'
+        raise SchemaViolationException('Schema violation:' + msg.strip())
+    return data
+
 def inputbody(schema_class, *args_ma, **kw_ma):
     """ Checks that request.get_json() satisfies marshmallow schema: schema_class()
         On error SchemaViolationException is raised.
@@ -40,15 +52,7 @@ def inputbody(schema_class, *args_ma, **kw_ma):
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kw):
-            data, errors = schema_class(*args_ma, **kw_ma).load(request.get_json())
-            if(len(errors) > 0):
-                msg = ''
-                for x in errors:
-                    msg += x + ":"
-                    for d in errors[x]:
-                        msg += " " + str(d)
-                    msg += '\n'
-                raise SchemaViolationException('Schema violation:' + msg.strip())
+            data = _schema_load(schema_class, args_ma, kw_ma, request.get_json())
             return f(*args, data=data, **kw)
         return wrapper
     return decorator
@@ -62,27 +66,7 @@ def qsargs(schema_class, *args_ma, **kw_ma):
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kw):
-            data, errors = schema_class(*args_ma, **kw_ma).load(request.args)
-            if(len(errors) > 0):
-                msg = ''
-                for x in errors:
-                    msg += x + ":"
-                    for d in errors[x]:
-                        msg += " " + str(d)
-                    msg += '\n'
-                raise SchemaViolationException('Schema violation:' + msg.strip())
+            data = _schema_load(schema_class, args_ma, kw_ma, request.args)
             return f(*args, data, **kw)
         return wrapper
     return decorator
-
-def load_and_validate_schema(schema_class, instance):
-    data, errors = schema_class().load(request.get_json(), instance=instance)
-    if(len(errors) > 0):
-        msg = ''
-        for x in errors:
-            msg += x + ":"
-            for d in errors[x]:
-                msg += " " + str(d)
-            msg += '\n'
-        raise SchemaViolationException('Schema violation:' + msg.strip())
-    return data
