@@ -14,10 +14,8 @@ class SchemaViolationException(Exception):
 
 
 def output(schema_class, *args_ma, **kw_ma):
-    """ Checks that request.get_json() satisfies marshmallow schema: schema_class()
-        On error SchemaViolationException is raised.
-        On success the decorated function is called with the kword argument
-        `data` containing the loaded schema_class
+    """ Transforms function output with:
+         schema_class(*args_ma, **kw_ma).dump(function_output).data
     """
     def decorator(f):
         @wraps(f)
@@ -25,14 +23,9 @@ def output(schema_class, *args_ma, **kw_ma):
             out = f(*args, **kw)
             schema = schema_class(*args_ma, **kw_ma)
             if isinstance(out, tuple):
-                val = out[0]
-                code = 200
-                headers = dict()
-                if len(out) > 1:
-                    code = out[1]
-                if len(out) > 2:
-                    headers = out[2]
-                return schema.dump(val).data, code, headers
+                val, *other = out
+                dumped = schema.dump(val).data
+                return tuple([dumped] + other)
             else:
                 return schema.dump(out).data
         return wrapper
