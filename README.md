@@ -14,11 +14,11 @@ This project contains the components needed to develop, test and deploy as docke
     
 ## Run
 
-    python manage.py runserver
+    flask run
     
 ## Run tests
 
-    python manage.py test
+    pytest
     
 # Build Docker image and run
 
